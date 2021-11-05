@@ -11,14 +11,13 @@ import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @EnableRuleMigrationSupport
-class CustomResourceLoadAndCreateTest {
+class CustomResourceLoadAndCreateCrudTest {
   @Rule
-  public KubernetesServer server = new KubernetesServer();
+  public KubernetesServer server = new KubernetesServer(true, true);
 
   @Test
   @DisplayName("Should Create CronTab CRD")
@@ -29,10 +28,6 @@ class CustomResourceLoadAndCreateTest {
       .customResourceDefinitions()
       .load(new BufferedInputStream(new FileInputStream("src/test/resources/crontab-crd.yml")))
       .get();
-    server.expect().post()
-      .withPath("/apis/apiextensions.k8s.io/v1/customresourcedefinitions")
-      .andReturn(HttpURLConnection.HTTP_OK, cronTabCrd)
-      .once();
 
     // When
     CustomResourceDefinition createdCronTabCrd = client.apiextensions().v1()
