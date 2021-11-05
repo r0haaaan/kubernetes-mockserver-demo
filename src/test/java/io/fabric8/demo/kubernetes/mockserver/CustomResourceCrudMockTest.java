@@ -2,8 +2,6 @@ package io.fabric8.demo.kubernetes.mockserver;
 
 import io.fabric8.demo.kubernetes.customresource.CronTab;
 import io.fabric8.demo.kubernetes.customresource.CronTabList;
-import io.fabric8.demo.kubernetes.customresource.DoneableCronTab;
-import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -18,20 +16,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @EnableRuleMigrationSupport
-public class CustomResourceCrudMockTest {
+class CustomResourceCrudMockTest {
     @Rule
     public KubernetesServer crudServer = new KubernetesServer(true, true);
 
     @Test
     @DisplayName("Should list all CronTab custom resources")
-    public void testCronTabCrud() {
+    void testCronTabCrud() {
         // Given
         KubernetesClient client = crudServer.getClient();
-
-        CustomResourceDefinition cronTabCrd = client.customResourceDefinitions()
-                .load(getClass().getResourceAsStream("/crontab-crd.yml")).get();
-        MixedOperation<CronTab, CronTabList, DoneableCronTab, Resource<CronTab, DoneableCronTab>> cronTabClient = client
-                .customResources(cronTabCrd, CronTab.class, CronTabList.class, DoneableCronTab.class);
+        MixedOperation<CronTab, CronTabList, Resource<CronTab>> cronTabClient = client
+                .resources(CronTab.class, CronTabList.class);
 
         // When
         CronTab createdCronTab = cronTabClient.inNamespace("default").create(getCronTab());

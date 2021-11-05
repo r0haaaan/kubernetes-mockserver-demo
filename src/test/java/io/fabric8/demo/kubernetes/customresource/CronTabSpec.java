@@ -1,13 +1,6 @@
 package io.fabric8.demo.kubernetes.customresource;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.fabric8.kubernetes.api.model.KubernetesResource;
-
-@JsonDeserialize(
-        using = JsonDeserializer.None.class
-)
-public class CronTabSpec implements KubernetesResource {
+public class CronTabSpec {
     public String getCronSpec() {
         return cronSpec;
     }
@@ -39,9 +32,9 @@ public class CronTabSpec implements KubernetesResource {
     @Override
     public String toString() {
         return "CronTabSpec{" +
-                "replicas=" + replicas  +
-                ", cronSpec='" + cronSpec + "'" +
-                ", image='" + image + "'" +
-                "}";
+          "replicas=" + replicas  +
+          ", cronSpec='" + cronSpec + "'" +
+          ", image='" + image + "'" +
+          "}";
     }
 }

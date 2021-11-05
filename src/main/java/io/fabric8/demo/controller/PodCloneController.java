@@ -14,11 +14,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PodCloneController {
-    private BlockingQueue<String> workqueue;
-    private SharedIndexInformer<Pod> podInformer;
-    private Lister<Pod> podLister;
-    private KubernetesClient kubernetesClient;
-    public static Logger logger = Logger.getLogger(PodCloneController.class.getName());
+    private final BlockingQueue<String> workqueue;
+    private final SharedIndexInformer<Pod> podInformer;
+    private final Lister<Pod> podLister;
+    private final KubernetesClient kubernetesClient;
+    public final static Logger logger = Logger.getLogger(PodCloneController.class.getName());
 
     public PodCloneController(KubernetesClient kubernetesClient, SharedIndexInformer<Pod> podInformer, String namespace) {
         this.kubernetesClient = kubernetesClient;

@@ -16,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableRuleMigrationSupport
-public class DeploymentMockTest {
+class DeploymentMockTest {
     @Rule
     public KubernetesServer server = new KubernetesServer();
 
     @Test
     @DisplayName("Should create, update and delete Deployment")
-    public void testDeploymentCrud() {
+    void testDeploymentCrud() {
         // Given
         DeploymentBuilder deploymentBuilder = new DeploymentBuilder()
                 .withNewMetadata().withName("deploy1").endMetadata();
@@ -40,8 +40,9 @@ public class DeploymentMockTest {
 
         // When
         client.apps().deployments().inNamespace("ns1").create(deploymentBuilder.build());
-        Deployment deployment = client.apps().deployments().inNamespace("ns1").withName("deploy1").edit()
-                .editMetadata().addToLabels("foo", "bar").endMetadata().done();
+        Deployment deployment = client.apps().deployments().inNamespace("ns1").withName("deploy1")
+          .edit(d -> new DeploymentBuilder(d)
+                .editMetadata().addToLabels("foo", "bar").endMetadata().build());
         Boolean isDeleted = client.apps().deployments().inNamespace("ns1").withName("deploy1").delete();
 
         // Then

@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableRuleMigrationSupport
-public class PodMockTest {
+class PodMockTest {
     @Rule
     public KubernetesServer server = new KubernetesServer();
 
     @Test
     @DisplayName("Should list pods in all namespaces")
-    public void testPodGet() {
+    void testPodGet() {
         // Given
         PodList expectedPodList = new PodListBuilder().withItems(
                 new PodBuilder().withNewMetadata().withName("pod1").endMetadata()
@@ -46,7 +46,7 @@ public class PodMockTest {
 
     @Test
     @DisplayName("Should be able to list pods in default namespace")
-    public void testPodGetInDefaultNamespace() {
+    void testPodGetInDefaultNamespace() {
         // Given
         server.expect().get().withPath("/api/v1/namespaces/default/pods")
                 .andReturn(HttpURLConnection.HTTP_OK, new PodListBuilder().build())
@@ -59,6 +59,4 @@ public class PodMockTest {
         // Then
         assertTrue(podList.getItems().isEmpty());
     }
-
-
 }
