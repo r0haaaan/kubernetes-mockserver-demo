@@ -59,7 +59,7 @@ class CustomResourceMockTest {
     @DisplayName("Should watch all CronTab custom resources")
     void testCronTabWatch() throws InterruptedException {
         // Given
-        server.expect().withPath("/apis/stable.example.com/v1/namespaces/default/crontabs?watch=true")
+        server.expect().withPath("/apis/stable.example.com/v1/namespaces/default/crontabs?allowWatchBookmarks=true&watch=true")
                 .andUpgradeToWebSocket()
                 .open()
                 .waitFor(10L)
