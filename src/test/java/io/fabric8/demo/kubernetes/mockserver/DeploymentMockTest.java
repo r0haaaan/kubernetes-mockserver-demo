@@ -1,5 +1,6 @@
 package io.fabric8.demo.kubernetes.mockserver;
 
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -10,10 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
 import java.net.HttpURLConnection;
+import java.util.Collections;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @EnableRuleMigrationSupport
 class DeploymentMockTest {
@@ -39,15 +40,16 @@ class DeploymentMockTest {
         KubernetesClient client = server.getClient();
 
         // When
-        client.apps().deployments().inNamespace("ns1").create(deploymentBuilder.build());
+        client.apps().deployments().inNamespace("ns1").resource(deploymentBuilder.build()).create();
         Deployment deployment = client.apps().deployments().inNamespace("ns1").withName("deploy1")
           .edit(d -> new DeploymentBuilder(d)
                 .editMetadata().addToLabels("foo", "bar").endMetadata().build());
-        Boolean isDeleted = client.apps().deployments().inNamespace("ns1").withName("deploy1").delete();
+        List<StatusDetails> deleteStatusDetails =  client.apps().deployments().inNamespace("ns1").withName("deploy1").delete();
 
         // Then
-        assertFalse(deployment.getMetadata().getLabels().isEmpty());
-        assertEquals("bar", deployment.getMetadata().getLabels().get("foo"));
-        assertTrue(isDeleted);
+        assertThat(deployment)
+            .hasFieldOrPropertyWithValue("metadata.labels", Collections.singletonMap("foo", "bar"));
+        assertThat(deleteStatusDetails)
+            .hasSize(1);
     }
 }

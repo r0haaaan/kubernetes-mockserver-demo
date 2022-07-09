@@ -13,7 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @EnableRuleMigrationSupport
 class CustomResourceLoadAndCreateTest {
@@ -36,10 +36,11 @@ class CustomResourceLoadAndCreateTest {
 
     // When
     CustomResourceDefinition createdCronTabCrd = client.apiextensions().v1()
-      .customResourceDefinitions()
-      .create(cronTabCrd);
+        .customResourceDefinitions()
+        .resource(cronTabCrd)
+        .create();
 
     // Then
-    assertNotNull(createdCronTabCrd);
+    assertThat(createdCronTabCrd).isNotNull();
   }
 }

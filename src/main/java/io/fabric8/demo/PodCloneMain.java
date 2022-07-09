@@ -2,8 +2,8 @@ package io.fabric8.demo;
 
 import io.fabric8.demo.controller.PodCloneController;
 import io.fabric8.kubernetes.api.model.Pod;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import io.fabric8.kubernetes.client.informers.SharedIndexInformer;
 import io.fabric8.kubernetes.client.informers.SharedInformerFactory;
 
@@ -14,7 +14,7 @@ public class PodCloneMain {
     public static final Logger logger = Logger.getLogger(PodCloneMain.class.getName());
 
     public static void main(String[] args) {
-        try (KubernetesClient client = new DefaultKubernetesClient()) {
+        try (KubernetesClient client = new KubernetesClientBuilder().build()) {
             String namespace = client.getNamespace();
             if (namespace == null) {
                 logger.log(Level.INFO, "No namespace found via config, assuming default.");

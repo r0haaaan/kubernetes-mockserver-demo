@@ -2,9 +2,9 @@ package io.fabric8.demo.kubernetes.mockserver;
 
 import io.fabric8.demo.kubernetes.customresource.CronTab;
 import io.fabric8.demo.kubernetes.customresource.CronTabList;
+import io.fabric8.kubernetes.api.model.DefaultKubernetesResourceList;
 import io.fabric8.kubernetes.api.model.WatchEvent;
 import io.fabric8.kubernetes.api.model.WatchEventBuilder;
-import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
@@ -24,8 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.fabric8.demo.kubernetes.customresource.CronTabFactory.getCronTab;
 import static io.fabric8.demo.kubernetes.customresource.CronTabFactory.getCronTabList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableRuleMigrationSupport
 class CustomResourceMockTest {
@@ -42,8 +41,6 @@ class CustomResourceMockTest {
           .once();
         KubernetesClient client = server.getClient();
 
-        CustomResourceDefinition cronTabCrd = client.apiextensions().v1().customResourceDefinitions()
-                .load(getClass().getResourceAsStream("/crontab-crd.yml")).get();
         MixedOperation<CronTab, CronTabList, Resource<CronTab>> cronTabClient = client
                 .resources(CronTab.class, CronTabList.class);
 
@@ -51,8 +48,10 @@ class CustomResourceMockTest {
         CronTabList cronTabList = cronTabClient.inNamespace("default").list();
 
         // Then
-        assertNotNull(cronTabList);
-        assertEquals(1, cronTabList.getItems().size());
+        assertThat(cronTabList)
+            .extracting(DefaultKubernetesResourceList::getItems)
+            .asList()
+            .hasSize(1);
     }
 
     @Test
@@ -90,8 +89,8 @@ class CustomResourceMockTest {
         });
 
         // Then
-        eventRecieved.await(1, TimeUnit.SECONDS);
-        assertEquals(0, eventRecieved.getCount());
+        assertThat(eventRecieved.await(1, TimeUnit.SECONDS)).isTrue();
+        assertThat(eventRecieved.getCount()).isZero();
         watch.close();
     }
 

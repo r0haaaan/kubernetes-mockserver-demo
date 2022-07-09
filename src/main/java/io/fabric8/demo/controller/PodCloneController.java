@@ -18,7 +18,7 @@ public class PodCloneController {
     private final SharedIndexInformer<Pod> podInformer;
     private final Lister<Pod> podLister;
     private final KubernetesClient kubernetesClient;
-    public final static Logger logger = Logger.getLogger(PodCloneController.class.getName());
+    public static final Logger logger = Logger.getLogger(PodCloneController.class.getName());
 
     public PodCloneController(KubernetesClient kubernetesClient, SharedIndexInformer<Pod> podInformer, String namespace) {
         this.kubernetesClient = kubernetesClient;
@@ -93,7 +93,7 @@ public class PodCloneController {
                 .withSpec(pod.getSpec())
                 .build();
         logger.info("Creating clone for " + pod.getMetadata().getName());
-        kubernetesClient.pods().inNamespace(pod.getMetadata().getNamespace()).create(clonePod);
+        kubernetesClient.pods().inNamespace(pod.getMetadata().getNamespace()).resource(clonePod).create();
     }
 
     private void enqueuePodObject(Pod pod) {

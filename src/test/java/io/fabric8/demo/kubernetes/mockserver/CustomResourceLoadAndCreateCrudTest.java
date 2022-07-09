@@ -31,8 +31,9 @@ class CustomResourceLoadAndCreateCrudTest {
 
     // When
     CustomResourceDefinition createdCronTabCrd = client.apiextensions().v1()
-      .customResourceDefinitions()
-      .create(cronTabCrd);
+        .customResourceDefinitions()
+        .resource(cronTabCrd)
+        .create();
 
     // Then
     assertNotNull(createdCronTabCrd);

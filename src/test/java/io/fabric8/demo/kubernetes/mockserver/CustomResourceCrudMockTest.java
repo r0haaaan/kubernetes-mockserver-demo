@@ -29,7 +29,7 @@ class CustomResourceCrudMockTest {
                 .resources(CronTab.class, CronTabList.class);
 
         // When
-        CronTab createdCronTab = cronTabClient.inNamespace("default").create(getCronTab());
+        CronTab createdCronTab = cronTabClient.inNamespace("default").resource(getCronTab()).create();
         CronTabList cronTabList = cronTabClient.inNamespace("default").list();
 
         // Then
