@@ -1,7 +1,7 @@
 package io.fabric8.demo.kubernetes.mockserver;
 
 import io.fabric8.demo.kubernetes.customresource.CronTab;
-import io.fabric8.demo.kubernetes.customresource.CronTabList;
+import io.fabric8.kubernetes.api.model.KubernetesResourceList;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -25,12 +25,12 @@ class CustomResourceCrudMockTest {
     void testCronTabCrud() {
         // Given
         KubernetesClient client = crudServer.getClient();
-        MixedOperation<CronTab, CronTabList, Resource<CronTab>> cronTabClient = client
-                .resources(CronTab.class, CronTabList.class);
+        MixedOperation<CronTab, KubernetesResourceList<CronTab>, Resource<CronTab>> cronTabClient = client
+                .resources(CronTab.class);
 
         // When
         CronTab createdCronTab = cronTabClient.inNamespace("default").resource(getCronTab()).create();
-        CronTabList cronTabList = cronTabClient.inNamespace("default").list();
+        KubernetesResourceList<CronTab> cronTabList = cronTabClient.inNamespace("default").list();
 
         // Then
         assertNotNull(createdCronTab);

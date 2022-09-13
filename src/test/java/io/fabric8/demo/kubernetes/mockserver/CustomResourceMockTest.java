@@ -1,8 +1,7 @@
 package io.fabric8.demo.kubernetes.mockserver;
 
 import io.fabric8.demo.kubernetes.customresource.CronTab;
-import io.fabric8.demo.kubernetes.customresource.CronTabList;
-import io.fabric8.kubernetes.api.model.DefaultKubernetesResourceList;
+import io.fabric8.kubernetes.api.model.KubernetesResourceList;
 import io.fabric8.kubernetes.api.model.WatchEvent;
 import io.fabric8.kubernetes.api.model.WatchEventBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -41,15 +40,14 @@ class CustomResourceMockTest {
           .once();
         KubernetesClient client = server.getClient();
 
-        MixedOperation<CronTab, CronTabList, Resource<CronTab>> cronTabClient = client
-                .resources(CronTab.class, CronTabList.class);
+        MixedOperation<CronTab, KubernetesResourceList<CronTab>, Resource<CronTab>> cronTabClient = client.resources(CronTab.class);
 
         // When
-        CronTabList cronTabList = cronTabClient.inNamespace("default").list();
+        KubernetesResourceList<CronTab> cronTabList = cronTabClient.inNamespace("default").list();
 
         // Then
         assertThat(cronTabList)
-            .extracting(DefaultKubernetesResourceList::getItems)
+            .extracting(KubernetesResourceList::getItems)
             .asList()
             .hasSize(1);
     }
@@ -71,8 +69,7 @@ class CustomResourceMockTest {
                         .endStatusObject()
                         .build()).done().always();
         KubernetesClient client = server.getClient();
-        MixedOperation<CronTab, CronTabList, Resource<CronTab>> cronTabClient = client
-                .resources(CronTab.class, CronTabList.class);
+        MixedOperation<CronTab, KubernetesResourceList<CronTab>, Resource<CronTab>> cronTabClient = client.resources(CronTab.class);
 
         // When
         CountDownLatch eventRecieved = new CountDownLatch(1);

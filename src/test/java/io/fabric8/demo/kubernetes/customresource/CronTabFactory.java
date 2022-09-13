@@ -1,15 +1,26 @@
 package io.fabric8.demo.kubernetes.customresource;
 
+import io.fabric8.kubernetes.api.model.KubernetesResourceList;
+import io.fabric8.kubernetes.api.model.ListMeta;
+import io.fabric8.kubernetes.api.model.ListMetaBuilder;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 
 import java.util.Collections;
+import java.util.List;
 
 public class CronTabFactory {
-    public static CronTabList getCronTabList() {
-        CronTabList cronTabList = new CronTabList();
-        cronTabList.setItems(Collections.singletonList(getCronTab()));
+    public static KubernetesResourceList<CronTab> getCronTabList() {
+        return new KubernetesResourceList<CronTab>() {
+            @Override
+            public ListMeta getMetadata() {
+                return new ListMetaBuilder().build();
+            }
 
-        return cronTabList;
+            @Override
+            public List<CronTab> getItems() {
+                return Collections.singletonList(getCronTab());
+            }
+        };
     }
 
     public static CronTab getCronTab() {
